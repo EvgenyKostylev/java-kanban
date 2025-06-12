@@ -1,3 +1,5 @@
+package util;
+
 public enum Status {
     NEW,
     DONE,
