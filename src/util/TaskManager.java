@@ -33,10 +33,11 @@ public class TaskManager {
 
     public void removeSubtasks() {
         subtaskList.clear();
+
         ArrayList<Epic> epicList = getEpics();
 
         for (Epic epic : epicList) {
-            epic.clearSubtasks();
+            epic.setSubtasks(new ArrayList<>());
             updateEpicStatus(epic);
         }
     }
@@ -68,9 +69,11 @@ public class TaskManager {
     public void createSubtask(Subtask subtask) {
         int subtaskHash = subtask.hashCode();
         Epic epic = epicList.get(subtask.getEpicId());
+        ArrayList<Subtask> subtasksByEpic = getSubtasksByEpic(epic);
 
         subtaskList.put(subtaskHash, subtask);
-        epic.addSubtask(subtask);
+        subtasksByEpic.add(subtask);
+        epic.setSubtasks(subtasksByEpic);
         updateEpicStatus(epic);
     }
 
@@ -80,7 +83,7 @@ public class TaskManager {
 
     public void updateEpic(int id, Epic newEpic) {
         Epic epic = getEpic(id);
-        ArrayList<Subtask> subtasksByEpic = epic.getSubtasks();
+        ArrayList<Subtask> subtasksByEpic = getSubtasksByEpic(epic);
 
         for (Subtask subtask : subtasksByEpic) {
             subtask.setEpicId(newEpic.getId());
@@ -91,8 +94,16 @@ public class TaskManager {
 
     public void updateSubtask(int id, Subtask subtask) {
         Epic epic = epicList.get(subtask.getEpicId());
+        ArrayList<Subtask> subtasksByEpic = getSubtasksByEpic(epic);
 
-        epic.updateSubtask(id, subtask);
+        for (int i = 0; i < subtasksByEpic.size(); i++) {
+            Subtask currentSubtask = subtasksByEpic.get(i);
+
+            if (currentSubtask.getId() == id) {
+                subtasksByEpic.set(i, subtask);
+            }
+        }
+        epic.setSubtasks(subtasksByEpic);
         subtaskList.replace(id, subtask);
         updateEpicStatus(epic);
     }
@@ -103,26 +114,32 @@ public class TaskManager {
 
     public void removeEpic(int id) {
         Epic epic = epicList.get(id);
-        ArrayList<Subtask> subtasksByEpic = epic.getSubtasks();
+        ArrayList<Subtask> subtasksByEpic = getSubtasksByEpic(epic);
 
         for (Subtask subtask : subtasksByEpic) {
             subtaskList.remove(subtask.getId());
         }
-        epic.clearSubtasks();
+        epic.setSubtasks(new ArrayList<>());
         epicList.remove(id);
     }
 
     public void removeSubtask(int id) {
         Subtask subtask = subtaskList.get(id);
         Epic epic = epicList.get(subtask.getEpicId());
+        ArrayList<Subtask> subtasksByEpic = getSubtasksByEpic(epic);
 
+        subtasksByEpic.remove(subtask);
+        epic.setSubtasks(subtasksByEpic);
         subtaskList.remove(id);
-        epic.removeSubtask(subtask);
         updateEpicStatus(epic);
     }
 
+    public ArrayList<Subtask> getSubtasksByEpic(Epic epic) {
+        return epic.getSubtasks();
+    }
+
     public void updateEpicStatus(Epic epic) {
-        ArrayList<Subtask> subtasksByEpic = epic.getSubtasks();
+        ArrayList<Subtask> subtasksByEpic = getSubtasksByEpic(epic);
         int completedSubtasks = 0;
 
         for (Subtask subtask : subtasksByEpic) {

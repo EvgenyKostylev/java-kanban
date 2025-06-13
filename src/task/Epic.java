@@ -4,7 +4,7 @@ import util.Status;
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    private final ArrayList<Subtask> subtaskList;
+    private ArrayList<Subtask> subtaskList;
 
     public Epic(String name, String description) {
         super(name, description, Status.NEW);
@@ -15,25 +15,8 @@ public class Epic extends Task {
         return subtaskList;
     }
 
-    public void addSubtask(Subtask subtask) {
-        subtaskList.add(subtask);
-    }
-
-    public void clearSubtasks() {
-        subtaskList.clear();
-    }
-
-    public void updateSubtask(int id, Subtask newSubtask) {
-        for (int i = 0; i < subtaskList.size(); i++) {
-            Subtask subtask = subtaskList.get(i);
-            if (subtask.getId() == id) {
-                subtaskList.set(i, newSubtask);
-            }
-        }
-    }
-
-    public void removeSubtask(Subtask subtask) {
-        subtaskList.remove(subtask);
+    public void setSubtasks(ArrayList<Subtask> subtasks) {
+        this.subtaskList = subtasks;
     }
 
     @Override
