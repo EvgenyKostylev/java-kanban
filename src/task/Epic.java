@@ -16,7 +16,14 @@ public class Epic extends Task {
     }
 
     public void setSubtasks(ArrayList<Subtask> subtasks) {
-        this.subtaskList = subtasks;
+        ArrayList<Subtask> subtasksNotEpic = new ArrayList<>();
+
+        for (Subtask subtask : subtasks) {
+            if (subtask.getId() != getId()) {
+                subtasksNotEpic.add(subtask);
+            }
+        }
+        this.subtaskList = subtasksNotEpic;
     }
 
     @Override
