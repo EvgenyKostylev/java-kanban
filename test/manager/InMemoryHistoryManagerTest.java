@@ -1,7 +1,8 @@
-package util;
+package manager;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import task.Status;
 import task.Task;
 
 import java.util.List;

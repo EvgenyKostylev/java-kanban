@@ -1,14 +1,12 @@
 package task;
 
-import util.Status;
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtaskList;
+    private static final ArrayList<Subtask> subtaskList = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description, Status.NEW);
-        subtaskList = new ArrayList<>();
     }
 
     public ArrayList<Subtask> getSubtasks() {
@@ -16,14 +14,12 @@ public class Epic extends Task {
     }
 
     public void setSubtasks(ArrayList<Subtask> subtasks) {
-        ArrayList<Subtask> subtasksNotEpic = new ArrayList<>();
-
+        subtaskList.clear();
         for (Subtask subtask : subtasks) {
             if (subtask.getId() != getId()) {
-                subtasksNotEpic.add(subtask);
+                subtaskList.add(subtask);
             }
         }
-        this.subtaskList = subtasksNotEpic;
     }
 
     @Override

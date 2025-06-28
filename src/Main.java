@@ -1,5 +1,5 @@
 import task.*;
-import util.*;
+import manager.*;
 
 public class Main {
     private static final TaskManager manager = Managers.getDefault();
@@ -21,17 +21,17 @@ public class Main {
         manager.createSubtask(subtask1epic2);
         printAllTasks();
         task1.setStatus(Status.DONE);
-        manager.updateTask(task1.getId(), task1);
+        manager.updateTask(task1);
         task2.setStatus(Status.DONE);
-        manager.updateTask(task2.getId(), task2);
+        manager.updateTask(task2);
         epic1.setStatus(Status.NEW);
-        manager.updateEpic(epic1.getId(), epic1);
+        manager.updateEpic(epic1);
         subtask1epic1.setStatus(Status.DONE);
-        manager.updateSubtask(subtask1epic1.getId(), subtask1epic1);
+        manager.updateSubtask(subtask1epic1);
         epic2.setStatus(Status.IN_PROGRESS);
-        manager.updateEpic(epic2.getId(), epic2);
+        manager.updateEpic(epic2);
         subtask1epic2.setStatus(Status.DONE);
-        manager.updateSubtask(subtask1epic2.getId(), subtask1epic2);
+        manager.updateSubtask(subtask1epic2);
         printAllTasks();
         manager.removeTask(task1.getId());
         manager.removeEpic(epic1.getId());

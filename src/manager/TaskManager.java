@@ -1,4 +1,4 @@
-package util;
+package manager;
 
 import task.*;
 
@@ -30,11 +30,11 @@ public interface TaskManager {
 
     void createSubtask(Subtask subtask);
 
-    void updateTask(int id, Task task);
+    void updateTask(Task task);
 
-    void updateEpic(int id, Epic newEpic);
+    void updateEpic(Epic newEpic);
 
-    void updateSubtask(int id, Subtask subtask);
+    void updateSubtask(Subtask subtask);
 
     void removeTask(int id);
 

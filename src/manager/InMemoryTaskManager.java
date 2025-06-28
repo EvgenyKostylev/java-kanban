@@ -1,4 +1,4 @@
-package util;
+package manager;
 
 import task.*;
 
@@ -102,36 +102,35 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(int id, Task task) {
-        taskList.replace(id, task);
+    public void updateTask(Task task) {
+        taskList.put(task.getId(), task);
     }
 
     @Override
-    public void updateEpic(int id, Epic newEpic) {
-        Epic epic = epicList.get(id);
+    public void updateEpic(Epic epic) {
         ArrayList<Subtask> subtasksByEpic = getSubtasksByEpic(epic);
 
         for (Subtask subtask : subtasksByEpic) {
-            subtask.setEpicId(newEpic.getId());
+            subtask.setEpicId(epic.getId());
         }
-        epicList.replace(id, newEpic);
-        updateEpicStatus(newEpic);
+        epicList.put(epic.getId(), epic);
+        updateEpicStatus(epic);
     }
 
     @Override
-    public void updateSubtask(int id, Subtask subtask) {
+    public void updateSubtask(Subtask subtask) {
         Epic epic = epicList.get(subtask.getEpicId());
         ArrayList<Subtask> subtasksByEpic = getSubtasksByEpic(epic);
 
         for (int i = 0; i < subtasksByEpic.size(); i++) {
             Subtask currentSubtask = subtasksByEpic.get(i);
 
-            if (currentSubtask.getId() == id) {
+            if (currentSubtask.getId() == subtask.getId()) {
                 subtasksByEpic.set(i, subtask);
             }
         }
         epic.setSubtasks(subtasksByEpic);
-        subtaskList.replace(id, subtask);
+        subtaskList.put(subtask.getId(), subtask);
         updateEpicStatus(epic);
     }
 
