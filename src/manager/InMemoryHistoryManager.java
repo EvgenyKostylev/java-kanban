@@ -8,24 +8,26 @@ import java.util.HashMap;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private final HashMap<Integer, Node> viewingHistoryOfTasks = new HashMap<>();
-    private final LinkedTaskList historyTaskManager = new LinkedTaskList();
+    private Node head;
+    private Node tail;
+    private int sizeOfHistory = 0;
 
     @Override
     public void add(Task task) {
         if (viewingHistoryOfTasks.containsKey(task.getId())) {
             Node node = viewingHistoryOfTasks.get(task.getId());
 
-            historyTaskManager.removeNode(node);
+            removeNode(node);
         }
 
-        Node node = historyTaskManager.linkLast(task);
+        Node node = linkLast(task);
 
         viewingHistoryOfTasks.put(task.getId(), node);
     }
 
     @Override
     public List<Task> getHistory() {
-        return historyTaskManager.getTasks();
+        return getTasks();
     }
 
     @Override
@@ -33,18 +35,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (viewingHistoryOfTasks.containsKey(id)) {
             Node node = viewingHistoryOfTasks.get(id);
 
-            historyTaskManager.removeNode(node);
+            removeNode(node);
             viewingHistoryOfTasks.remove(id);
         }
     }
-}
 
-class LinkedTaskList {
-    private Node head;
-    private Node tail;
-    private int size = 0;
-
-    public Node linkLast(Task task) {
+    private Node linkLast(Task task) {
         Node newTail = new Node(task);
 
         if (head == null) {
@@ -55,11 +51,11 @@ class LinkedTaskList {
         }
         tail = newTail;
 
-        size++;
+        sizeOfHistory++;
         return newTail;
     }
 
-    public List<Task> getTasks() {
+    private List<Task> getTasks() {
         ArrayList<Task> historyViewingTask = new ArrayList<>();
         Node node = head;
 
@@ -71,7 +67,7 @@ class LinkedTaskList {
         return historyViewingTask;
     }
 
-    public void removeNode(Node node) {
+    private void removeNode(Node node) {
         Node prevNode = node.prev;
         Node nextNode = node.next;
 
@@ -90,6 +86,6 @@ class LinkedTaskList {
             nextNode.prev = prevNode;
         }
 
-        size--;
+        sizeOfHistory--;
     }
 }
