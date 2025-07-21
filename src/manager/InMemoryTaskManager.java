@@ -199,7 +199,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (completedSubtasks == subtasksByEpic.size() && !(subtasksByEpic.isEmpty())) {
             epic.setStatus(Status.DONE);
-        } else if (completedSubtasks > MIN_COMPLETED_SUBTASKS){
+        } else if (completedSubtasks > MIN_COMPLETED_SUBTASKS) {
             epic.setStatus(Status.IN_PROGRESS);
         } else {
             epic.setStatus(Status.NEW);

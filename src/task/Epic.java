@@ -27,7 +27,7 @@ public class Epic extends Task {
         String result = "Epic{" +
                 "name='" + getName() + '\'';
 
-        if(getDescription() != null) {
+        if (getDescription() != null) {
             result = result + ", description.length=" + getDescription().length();
         } else {
             result = result + ", description=null";
