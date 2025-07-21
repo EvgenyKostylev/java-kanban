@@ -38,8 +38,8 @@ public class EpicTest {
         subtaskList.add(subtask);
         firstEpic.setSubtasks(subtaskList);
 
-        for (Subtask subtaskByEpic : firstEpic.getSubtasks()) {
-            assertNotEquals(subtaskByEpic.getId(), firstEpic.getId(),
+        for (Integer subtaskIdByEpic : firstEpic.getSubtasks()) {
+            assertNotEquals(subtaskIdByEpic, firstEpic.getId(),
                     "Эпик не может содержась самого себя в качестве подзадачи");
         }
     }
