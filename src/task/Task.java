@@ -63,7 +63,7 @@ public class Task {
         String result = "Task{" +
                 "name='" + name + '\'';
 
-        if(description != null) {
+        if (description != null) {
             result = result + ", description.length=" + description.length();
         } else {
             result = result + ", description=null";

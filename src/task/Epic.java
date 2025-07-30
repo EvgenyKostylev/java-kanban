@@ -3,21 +3,21 @@ package task;
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    private static final ArrayList<Subtask> subtaskList = new ArrayList<>();
+    private final ArrayList<Integer> subtaskIdList = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description, Status.NEW);
     }
 
-    public ArrayList<Subtask> getSubtasks() {
-        return subtaskList;
+    public ArrayList<Integer> getSubtasks() {
+        return subtaskIdList;
     }
 
     public void setSubtasks(ArrayList<Subtask> subtasks) {
-        subtaskList.clear();
+        subtaskIdList.clear();
         for (Subtask subtask : subtasks) {
             if (subtask.getId() != getId()) {
-                subtaskList.add(subtask);
+                subtaskIdList.add(subtask.getId());
             }
         }
     }
@@ -27,7 +27,7 @@ public class Epic extends Task {
         String result = "Epic{" +
                 "name='" + getName() + '\'';
 
-        if(getDescription() != null) {
+        if (getDescription() != null) {
             result = result + ", description.length=" + getDescription().length();
         } else {
             result = result + ", description=null";

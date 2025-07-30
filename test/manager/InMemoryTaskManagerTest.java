@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import task.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -90,5 +91,27 @@ public class InMemoryTaskManagerTest {
                 "После добавления изменилось описание задачи");
         assertEquals(newTask.getId(), addedTask.getId(), "После добавления изменился Id задачи");
         assertEquals(newTask.getStatus(), addedTask.getStatus(), "После добавления изменился статус задачи");
+    }
+
+    @Test
+    public void epicKeepActualSubtaskId() {
+        manager.createEpic(epic);
+        manager.createSubtask(subtask);
+
+        Subtask updatedSubtask = new Subtask(subtask.getEpicId(), subtask.getName(), subtask.getDescription(),
+                subtask.getStatus());
+
+        updatedSubtask.setId(subtask.getId());
+        manager.updateSubtask(updatedSubtask);
+
+        List<Subtask> subtaskByEpic = manager.getSubtasksByEpic(epic);
+
+        assertEquals(updatedSubtask, subtaskByEpic.getFirst(), "Сохранился неуктуальный Id подзадачи");
+        assertEquals(1, subtaskByEpic.size(), "Сохранился неактуальный Id подзадачи вместе с актуальным");
+        manager.removeSubtasks();
+
+        subtaskByEpic = manager.getSubtasksByEpic(epic);
+
+        assertEquals(0, subtaskByEpic.size(), "Сохранился неактуальный Id подзадачи после удаления");
     }
 }

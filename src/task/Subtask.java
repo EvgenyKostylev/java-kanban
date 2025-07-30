@@ -23,7 +23,7 @@ public class Subtask extends Task {
         String result = "Subtask{" +
                 "name='" + getName() + '\'';
 
-        if(getDescription() != null) {
+        if (getDescription() != null) {
             result = result + ", description.length=" + getDescription().length();
         } else {
             result = result + ", description=null";
