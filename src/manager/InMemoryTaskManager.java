@@ -79,16 +79,14 @@ public class InMemoryTaskManager implements TaskManager {
     public Task createTask(Task task) {
         int taskHash = task.hashCode();
 
-        taskList.put(taskHash, task);
-        return task;
+        return taskList.put(taskHash, task);
     }
 
     @Override
     public Epic createEpic(Epic epic) {
         int epicHash = epic.hashCode();
 
-        epicList.put(epicHash, epic);
-        return epic;
+        return epicList.put(epicHash, epic);
     }
 
     @Override
@@ -106,8 +104,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task updateTask(Task task) {
-        taskList.put(task.getId(), task);
-        return task;
+        return taskList.put(task.getId(), task);
     }
 
     @Override
