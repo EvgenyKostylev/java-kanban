@@ -18,7 +18,7 @@ public class InMemoryTaskManagerTest {
 
     @BeforeAll
     public static void beforeAll() {
-        manager = Managers.getDefault();
+        manager = new InMemoryTaskManager();
         task = new Task("Сделать подарок Матвею", "Отправить посылку Матвею по почте", Status.NEW);
         epic = new Epic("Приготовить обед", "Приготовить яишницу по канадски");
         subtask = new Subtask(epic.getId(), "Достать продукты", "Достать из холодильника продукты",

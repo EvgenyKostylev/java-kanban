@@ -11,8 +11,8 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            file = File.createTempFile("tmpManagerTest", ".txt");
-            firstManager = Managers.getFileBackedManager(file);
+            file = File.createTempFile("tmpManagerTest", ".csv");
+            firstManager = FileBackedTaskManager.loadFromFile(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -30,7 +30,7 @@ public class Main {
         Subtask subtask2epic1 = new Subtask(epic1.getId(), "Одеться по погоде", "Нельзя простужаться",
                 Status.NEW);
         firstManager.createSubtask(subtask2epic1);
-        secondManager = Managers.getFileBackedManager(file);
+        secondManager = FileBackedTaskManager.loadFromFile(file);
         secondManager.getTask(task1.getId());
         secondManager.getTask(task2.getId());
         secondManager.getEpic(epic1.getId());
