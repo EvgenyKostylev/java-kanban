@@ -9,6 +9,10 @@ public class Epic extends Task {
         super(name, description, Status.NEW);
     }
 
+    public Epic(Task task) {
+        super(task);
+    }
+
     public ArrayList<Integer> getSubtasks() {
         return subtaskIdList;
     }
@@ -20,6 +24,20 @@ public class Epic extends Task {
                 subtaskIdList.add(subtask.getId());
             }
         }
+    }
+
+    public void setSubtasksId(ArrayList<Integer> subtasksId) {
+        subtaskIdList.clear();
+        for (Integer subtaskId : subtasksId) {
+            if (subtaskId != getId()) {
+                subtaskIdList.add(subtaskId);
+            }
+        }
+    }
+
+    @Override
+    public TaskType getType() {
+        return TaskType.EPIC;
     }
 
     @Override

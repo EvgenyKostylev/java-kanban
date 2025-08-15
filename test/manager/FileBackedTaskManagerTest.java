@@ -3,26 +3,47 @@ package manager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import task.*;
+import task.Epic;
+import task.Status;
+import task.Subtask;
+import task.Task;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class InMemoryTaskManagerTest {
+public class FileBackedTaskManagerTest {
     private static TaskManager manager;
     private static Task task;
     private static Epic epic;
     private static Subtask subtask;
+    private static File file;
+    private static File emptyFile;
+    private static FileBackedTaskManager emptyManager;
+    private static final int ZERO_LENGTH_FILE = 0;
 
     @BeforeAll
     public static void beforeAll() {
-        manager = new InMemoryTaskManager();
+        try {
+            file = File.createTempFile("ManagerTestTmp", ".txt");
+        } catch (IOException e) {
+            System.out.println("Не удалось создать временный файл:");
+            e.printStackTrace();
+        }
+        manager = FileBackedTaskManager.loadFromFile(file);
         task = new Task("Сделать подарок Матвею", "Отправить посылку Матвею по почте", Status.NEW);
         epic = new Epic("Приготовить обед", "Приготовить яишницу по канадски");
         subtask = new Subtask(epic.getId(), "Достать продукты", "Достать из холодильника продукты",
                 Status.NEW);
+        try {
+            emptyFile = File.createTempFile("ManagerTestEmptyTmp", ".txt");
+        } catch (IOException e) {
+            System.out.println("Не удалось создать временный файл:");
+            e.printStackTrace();
+        }
     }
 
     @AfterEach
@@ -30,6 +51,7 @@ public class InMemoryTaskManagerTest {
         manager.removeTasks();
         manager.removeEpics();
         manager.removeSubtasks();
+        emptyManager = null;
     }
 
     @Test
@@ -114,5 +136,39 @@ public class InMemoryTaskManagerTest {
         subtaskByEpic = manager.getSubtasksByEpic(epic);
 
         assertEquals(0, subtaskByEpic.size(), "Сохранился неактуальный Id подзадачи после удаления");
+    }
+
+    @Test
+    public void managerAcceptEmptyFile() {
+        assertEquals(ZERO_LENGTH_FILE, emptyFile.length(), "Файл содержит данные");
+        assertDoesNotThrow(() -> emptyManager = FileBackedTaskManager.loadFromFile(emptyFile),
+                "Менеджер не принял пустой файл");
+    }
+
+    @Test
+    public void managerAcceptNotEmptyFile() {
+        manager.createTask(task);
+        assertNotEquals(ZERO_LENGTH_FILE, file.length(), "Файл не содержит данные");
+        assertDoesNotThrow(() -> emptyManager = FileBackedTaskManager.loadFromFile(file),
+                "Менеджер не принял файл с данными");
+    }
+
+    @Test
+    public void managerLoadMultipleTasks() {
+        manager.createTask(task);
+        manager.createEpic(epic);
+        manager.createSubtask(subtask);
+        emptyManager = FileBackedTaskManager.loadFromFile(file);
+        assertEquals(task, emptyManager.getTask(task.getId()), "Менеджер не загрузил задачу");
+        assertEquals(epic, emptyManager.getEpic(epic.getId()), "Менеджер не загрузил эпик");
+        assertEquals(subtask, emptyManager.getSubtask(subtask.getId()), "Менеджер не загрузит подзадачу");
+    }
+
+    @Test
+    public void managerSaveMultipleTasks() {
+        manager.createTask(task);
+        manager.createEpic(epic);
+        manager.createSubtask(subtask);
+        assertNotEquals(emptyFile.length(), file.length(), "Менеджер не сохранил задачи");
     }
 }
