@@ -1,12 +1,23 @@
 package task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
     private final ArrayList<Integer> subtaskIdList = new ArrayList<>();
+    private LocalDateTime endTime;
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
 
     public Epic(String name, String description) {
-        super(name, description, Status.NEW);
+        super(name, description, Status.NEW, null, null);
     }
 
     public Epic(Task task) {
@@ -17,22 +28,18 @@ public class Epic extends Task {
         return subtaskIdList;
     }
 
-    public void setSubtasks(ArrayList<Subtask> subtasks) {
+    public void setSubtasks(List<Subtask> subtasks) {
         subtaskIdList.clear();
-        for (Subtask subtask : subtasks) {
-            if (subtask.getId() != getId()) {
-                subtaskIdList.add(subtask.getId());
-            }
-        }
+        subtasks.stream()
+                .filter(subtask -> subtask.getId() != getId())
+                .forEach(subtask -> subtaskIdList.add(subtask.getId()));
     }
 
     public void setSubtasksId(ArrayList<Integer> subtasksId) {
         subtaskIdList.clear();
-        for (Integer subtaskId : subtasksId) {
-            if (subtaskId != getId()) {
-                subtaskIdList.add(subtaskId);
-            }
-        }
+        subtasksId.stream()
+                .filter(subtaskId -> subtaskId != getId())
+                .forEach(subtaskIdList::add);
     }
 
     @Override

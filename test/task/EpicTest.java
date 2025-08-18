@@ -15,9 +15,9 @@ public class EpicTest {
 
     @BeforeAll
     public static void beforeAll() {
-        subtaskList = new ArrayList<>();
         Epic epic = new Epic("Приготовить обед", "Приготовить яишницу по канадски");
 
+        subtaskList = new ArrayList<>();
         firstEpic = epic;
         secondEpic = epic;
     }
@@ -32,15 +32,12 @@ public class EpicTest {
     @Test
     public void addEpicToItselfAsSubtask() {
         Subtask subtask = new Subtask(firstEpic.getId(), "Достать продукты",
-                "Достать из холодильника яйца и кетчуп", Status.NEW);
+                "Достать из холодильника яйца и кетчуп", Status.NEW, null, null);
 
         subtask.setId(firstEpic.getId());
         subtaskList.add(subtask);
         firstEpic.setSubtasks(subtaskList);
-
-        for (Integer subtaskIdByEpic : firstEpic.getSubtasks()) {
-            assertNotEquals(subtaskIdByEpic, firstEpic.getId(),
-                    "Эпик не может содержась самого себя в качестве подзадачи");
-        }
+        firstEpic.getSubtasks().forEach(subtaskId -> assertNotEquals(subtaskId, firstEpic.getId(),
+                "Эпик не может содержась самого себя в качестве подзадачи"));
     }
 }

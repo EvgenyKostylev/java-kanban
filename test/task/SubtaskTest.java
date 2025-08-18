@@ -13,7 +13,7 @@ public class SubtaskTest {
     @BeforeAll
     public static void beforeAll() {
         Subtask subtask = new Subtask(1, "Достать продукты", "Достать из холодильника продукты",
-                Status.NEW);
+                Status.NEW, null, null);
 
         firstSubtask = subtask;
         secondSubtask = subtask;
