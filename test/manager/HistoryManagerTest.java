@@ -115,4 +115,9 @@ public abstract class HistoryManagerTest<T extends HistoryManager> {
         assertEquals(new ArrayList<>(), historyManager.getHistory(),
                 "История не может существовать без задач");
     }
+
+    @Test
+    public void historyCanStoreWithSingleTask() {
+        assertDoesNotThrow(() -> historyManager.add(task), "История не может сохраниться с одной задачей");
+    }
 }

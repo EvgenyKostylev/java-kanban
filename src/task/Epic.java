@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
-    private final ArrayList<Integer> subtaskIdList = new ArrayList<>();
+    private final List<Integer> subtaskIdList = new ArrayList<>();
     private LocalDateTime endTime;
 
     public LocalDateTime getEndTime() {
@@ -24,7 +24,7 @@ public class Epic extends Task {
         super(task);
     }
 
-    public ArrayList<Integer> getSubtasks() {
+    public List<Integer> getSubtasks() {
         return subtaskIdList;
     }
 

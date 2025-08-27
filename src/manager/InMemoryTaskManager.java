@@ -139,14 +139,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (updatePrioritizedTaskInList(subtaskList.get(subtask.getId()), subtask)) {
             Epic epic = epicList.get(subtask.getEpicId());
 
-            epic.setSubtasks(getSubtasksByEpic(epic).stream()
-                    .map(subtaskByEpic -> {
-                        if (subtaskByEpic.getId() == subtask.getId()) {
-                            return subtask;
-                        } else {
-                            return subtaskByEpic;
-                        }
-                    }).collect(Collectors.toList()));
+            updateEpicSubtask(epic, subtask);
             subtaskList.put(subtask.getId(), subtask);
             updateEpicStatus(epic);
             updateEpicTime(epic);
@@ -157,38 +150,47 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTask(int id) {
-        removeTaskFromPrioritizedList(getTask(id));
-        taskList.remove(id);
-        historyManager.remove(id);
+        Optional<Task> taskOpt = Optional.ofNullable(getTask(id));
+
+        if (taskOpt.isPresent()) {
+            removeTaskFromPrioritizedList(getTask(id));
+            taskList.remove(id);
+            historyManager.remove(id);
+        }
     }
 
     @Override
     public void removeEpic(int id) {
-        Epic epic = epicList.get(id);
+        Optional<Epic> epicOpt = Optional.ofNullable(epicList.get(id));
 
-        getSubtasksByEpic(epic).forEach(subtask -> {
-            removeTaskFromPrioritizedList(subtask);
-            subtaskList.remove(subtask.getId());
-            historyManager.remove(subtask.getId());
-        });
-        epic.setSubtasks(new ArrayList<>());
-        epicList.remove(id);
-        historyManager.remove(id);
+        if (epicOpt.isPresent()) {
+            getSubtasksByEpic(epicOpt.get()).forEach(subtask -> {
+                removeTaskFromPrioritizedList(subtask);
+                subtaskList.remove(subtask.getId());
+                historyManager.remove(subtask.getId());
+            });
+            epicOpt.get().setSubtasks(new ArrayList<>());
+            epicList.remove(id);
+            historyManager.remove(id);
+        }
     }
 
     @Override
     public void removeSubtask(int id) {
-        Subtask subtask = subtaskList.get(id);
-        Epic epic = epicList.get(subtask.getEpicId());
-        List<Subtask> subtasksByEpic = getSubtasksByEpic(epic);
+        Optional<Subtask> subtaskOpt = Optional.ofNullable(subtaskList.get(id));
 
-        subtasksByEpic.remove(subtask);
-        epic.setSubtasks(subtasksByEpic);
-        removeTaskFromPrioritizedList(subtask);
-        subtaskList.remove(id);
-        historyManager.remove(id);
-        updateEpicStatus(epic);
-        updateEpicTime(epic);
+        if (subtaskOpt.isPresent()) {
+            Epic epic = epicList.get(subtaskOpt.get().getEpicId());
+            List<Subtask> subtasksByEpic = getSubtasksByEpic(epic);
+
+            subtasksByEpic.remove(subtaskOpt.get());
+            epic.setSubtasks(subtasksByEpic);
+            removeTaskFromPrioritizedList(subtaskOpt.get());
+            subtaskList.remove(id);
+            historyManager.remove(id);
+            updateEpicStatus(epic);
+            updateEpicTime(epic);
+        }
     }
 
     @Override
@@ -286,16 +288,25 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean isIntervalBusy(Task task) {
         Optional<Task> taskOccupiedInterval = prioritizedTaskList.stream()
                 .filter(currentTask ->
-                        (task.getStartTime().isAfter(currentTask.getStartTime())
-                                && task.getStartTime().isBefore(currentTask.getEndTime()))
-                                || (task.getEndTime().isAfter(currentTask.getStartTime())
-                                && task.getEndTime().isBefore(currentTask.getEndTime()))
-                                || task.getStartTime().isEqual(currentTask.getStartTime())
-                                || task.getEndTime().isEqual(currentTask.getEndTime())
-                                || (task.getStartTime().isBefore(currentTask.getStartTime())
-                                && task.getEndTime().isAfter(currentTask.getEndTime())))
+                        (task.getStartTime().isEqual(currentTask.getStartTime())
+                                || task.getStartTime().isBefore(currentTask.getStartTime()))
+                                && task.getEndTime().isAfter(currentTask.getStartTime())
+                                || (currentTask.getStartTime().isEqual(task.getStartTime())
+                                || currentTask.getStartTime().isBefore(task.getStartTime()))
+                                && currentTask.getEndTime().isAfter(task.getStartTime()))
                 .findAny();
 
         return taskOccupiedInterval.isPresent();
+    }
+
+    public void updateEpicSubtask(Epic epic, Subtask subtask) {
+        epic.setSubtasks(getSubtasksByEpic(epic).stream()
+                .map(subtaskByEpic -> {
+                    if (subtaskByEpic.getId() == subtask.getId()) {
+                        return subtask;
+                    } else {
+                        return subtaskByEpic;
+                    }
+                }).collect(Collectors.toList()));
     }
 }

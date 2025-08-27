@@ -59,6 +59,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
+    public void managerCorrectlyHandleSearchNonExistentTask() {
+        assertNull(taskManager.getTask(213132),
+                "Менеджер некорректно обрабатывает поиск несуществующей задачи");
+    }
+
+    @Test
     public void managerCanFindCreatedEpicById() {
         taskManager.createEpic(epic);
 
@@ -66,6 +72,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(epic, epicList.getFirst(), "Менеджер не добавляет эпики");
         assertEquals(epic, taskManager.getEpic(epic.getId()), "Менеджер не находит эпики по Id");
+    }
+
+    @Test
+    public void managerCorrectlyHandleSearchNonExistentEpic() {
+        assertNull(taskManager.getEpic(213132),
+                "Менеджер некорректно обрабатывает поиск несуществующего эпика");
     }
 
     @Test
@@ -78,6 +90,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(firstSubtask, subtaskList.getFirst(), "Менеджер не добавляет подзадачи");
         assertEquals(firstSubtask, taskManager.getSubtask(firstSubtask.getId()),
                 "Менеджер не находит подзадачи по Id");
+    }
+
+    @Test
+    public void managerCorrectlyHandleSearchNonExistentSubtask() {
+        assertNull(taskManager.getSubtask(213132),
+                "Менеджер некорректно обрабатывает поиск несуществующей подзадачи");
     }
 
     @Test
@@ -214,5 +232,69 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createTask(firstTaskWithInterval);
         assertNull(taskManager.createTask(secondTaskWithInterval),
                 "Задачи могут иметь пересекающиеся интервалы");
+    }
+
+    @Test
+    public void managerCanDeleteTaskById() {
+        taskManager.createTask(task);
+        assertEquals(task, taskManager.getTask(task.getId()), "Менеджер не создаёт указанную задачу");
+        taskManager.removeTask(task.getId());
+        assertNull(taskManager.getTask(task.getId()), "Менеджер не удаляет указанную задачу");
+    }
+
+    @Test
+    public void managerCorrectlyHandleDeleteNonExistentTask() {
+        assertDoesNotThrow(() -> taskManager.removeTask(task.getId()),
+                "Менеджер некорректно обрабатывает удаление несуществующей задачи");
+    }
+
+    @Test
+    public void managerCanDeleteEpicById() {
+        taskManager.createEpic(epic);
+        assertEquals(epic, taskManager.getEpic(epic.getId()), "Менеджер не создаёт указанный эпик");
+        taskManager.removeEpic(epic.getId());
+        assertNull(taskManager.getEpic(epic.getId()), "Менеджер не удаляет указанный эпик");
+    }
+
+    @Test
+    public void managerCorrectlyHandleDeleteNonExistentEpic() {
+        assertDoesNotThrow(() -> taskManager.removeEpic(epic.getId()),
+                "Менеджер некорректно обрабатывает удаление несуществующего эпика");
+    }
+
+    @Test
+    public void managerCorrectlyHandleDeleteNonExistentSubtask() {
+        assertDoesNotThrow(() -> taskManager.removeSubtask(firstSubtask.getId()),
+                "Менеджер некорректно обрабатывает удаление несуществующей подзадачи");
+    }
+
+    @Test
+    public void managerCanDeleteSubtaskById() {
+        taskManager.createEpic(epic);
+        taskManager.createSubtask(firstSubtask);
+        assertEquals(firstSubtask, taskManager.getSubtask(firstSubtask.getId()),
+                "Менеджер не создаёт указанную подзадачу");
+        taskManager.removeSubtask(firstSubtask.getId());
+        assertNull(taskManager.getSubtask(firstSubtask.getId()), "Менеджер не удаляет указанную подзадачу");
+    }
+
+    @Test
+    public void managerCanGetSubtasksByEpic() {
+        taskManager.createEpic(epic);
+        taskManager.createSubtask(firstSubtask);
+        taskManager.createSubtask(secondSubtask);
+
+        List<Subtask> subtasksByEpic = new ArrayList<>();
+
+        subtasksByEpic.add(firstSubtask);
+        subtasksByEpic.add(secondSubtask);
+        assertEquals(subtasksByEpic, taskManager.getSubtasksByEpic(epic),
+                "Менеджер выдаёт некорректный список подзадач эпика");
+    }
+
+    @Test
+    public void managerCorrectlyHandleGetSubtasksByNonExistentEpic() {
+        assertDoesNotThrow(() -> taskManager.getSubtasksByEpic(epic),
+                "Менеджер некорректно обрабатывает поиск подзадач у несуществующего эпика");
     }
 }

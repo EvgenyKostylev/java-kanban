@@ -55,6 +55,13 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     }
 
     @Test
+    public void managerAcceptFileHaveEpicWithoutSubtasks() {
+        taskManager.createEpic(epic);
+        assertDoesNotThrow(() -> emptyManager = FileBackedTaskManager.loadFromFile(file),
+                "Менеджер не принял файл с эпиком без подзадач");
+    }
+
+    @Test
     public void managerLoadMultipleTasks() {
         taskManager.createTask(task);
         taskManager.createEpic(epic);
