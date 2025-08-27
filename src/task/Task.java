@@ -1,18 +1,24 @@
 package task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Task {
+public class Task implements Comparable<Task> {
     private String name;
     private String description;
     private int id;
     private Status status;
+    private Duration duration;
+    private LocalDateTime startTime;
 
-    public Task(String name, String description, Status status) {
+    public Task(String name, String description, Status status, LocalDateTime startTime, Duration duration) {
         this.name = name;
         this.description = description;
         id = hashCode();
         this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public Task(Task task) {
@@ -20,6 +26,28 @@ public class Task {
         this.description = task.getDescription();
         this.id = task.getId();
         this.status = task.getStatus();
+        this.startTime = task.getStartTime();
+        this.duration = task.getDuration();
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     public String getName() {
@@ -95,5 +123,16 @@ public class Task {
             hash = hash + description.hashCode();
         }
         return hash;
+    }
+
+    @Override
+    public int compareTo(Task task) {
+        if (this.startTime.isBefore(task.getStartTime())) {
+            return -1;
+        } else if (this.startTime.isAfter(task.getStartTime())) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

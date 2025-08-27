@@ -14,6 +14,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
+        if (task == null) {
+            return;
+        }
         if (viewingHistoryOfTasks.containsKey(task.getId())) {
             Node node = viewingHistoryOfTasks.get(task.getId());
 
@@ -50,7 +53,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail.next = newTail;
         }
         tail = newTail;
-
         sizeOfHistory++;
         return newTail;
     }
@@ -63,7 +65,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             historyViewingTask.add(node.data);
             node = node.next;
         }
-
         return historyViewingTask;
     }
 
@@ -85,7 +86,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             prevNode.next = nextNode;
             nextNode.prev = prevNode;
         }
-
         sizeOfHistory--;
     }
 }
