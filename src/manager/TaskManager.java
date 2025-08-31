@@ -42,9 +42,9 @@ public interface TaskManager {
 
     void removeSubtask(int id);
 
-    List<Subtask> getSubtasksByEpic(Epic epic);
-
     List<Task> getHistory();
 
     List<Task> getPrioritizedTasks();
+
+    List<Subtask> getSubtasksByEpic(Epic epic);
 }

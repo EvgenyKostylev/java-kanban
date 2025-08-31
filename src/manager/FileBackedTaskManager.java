@@ -146,7 +146,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         lineFromTask.append(task.getId()).append(",");
         if (task.getType() == TaskType.EPIC) {
             lineFromTask.append(TaskType.EPIC).append(",");
-            additionalInformation = ("subtasksId" + ((Epic) task).getSubtasks());
         } else if (task.getType() == TaskType.SUBTASK) {
             lineFromTask.append(TaskType.SUBTASK).append(",");
             additionalInformation = String.valueOf(((Subtask) task).getEpicId());
@@ -175,34 +174,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         if (taskTypeFromLine == TaskType.TASK) {
             super.createTask(taskFromLine);
         } else if (taskTypeFromLine == TaskType.EPIC) {
-            Epic epicFromLine = new Epic(taskFromLine);
-
-            if (!dataFromLine[7].equals("subtasksId=null")) {
-                epicFromLine.setSubtasksId(subtasksByEpicFromString(dataFromLine[7]));
-            }
-            super.createEpic(epicFromLine);
+            super.createEpic(new Epic(taskFromLine));
         } else {
             int epicIdFromLine = Integer.parseInt(dataFromLine[7]);
             Subtask subtaskFromLine = new Subtask(taskFromLine, epicIdFromLine);
 
             super.createSubtask(subtaskFromLine);
         }
-    }
-
-    private ArrayList<Integer> subtasksByEpicFromString(String line) {
-        ArrayList<Integer> subtasksIdByEpic = new ArrayList<>();
-        StringBuilder subtasksIdFromLine = new StringBuilder(line);
-
-        subtasksIdFromLine.delete(0, 11);
-        subtasksIdFromLine.deleteCharAt(subtasksIdFromLine.length() - 1);
-        if (!subtasksIdFromLine.isEmpty()) {
-            String[] subtasksId = subtasksIdFromLine.toString().split(", ");
-
-            for (String subtaskId : subtasksId) {
-                subtasksIdByEpic.add(Integer.valueOf(subtaskId));
-            }
-        }
-        return subtasksIdByEpic;
     }
 
     private Task taskFromData(String[] data) {

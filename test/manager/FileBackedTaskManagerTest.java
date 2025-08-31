@@ -17,7 +17,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     protected static final int ZERO_LENGTH_FILE = 0;
 
     @BeforeAll
-    public static void specialBeforeAll() {
+    public static void beforeAll() {
         try {
             file = File.createTempFile("ManagerTestTmp", ".txt");
             emptyFile = File.createTempFile("ManagerTestEmptyTmp", ".txt");

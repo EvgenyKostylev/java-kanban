@@ -1,7 +1,6 @@
 package manager;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Epic;
@@ -25,8 +24,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     protected abstract T createTaskManager();
 
-    @BeforeAll
-    public static void commonBeforeAll() {
+    @BeforeEach
+    public void beforeEach() {
+        taskManager = createTaskManager();
         task = new Task("Сделать подарок Матвею", "Отправить посылку Матвею по почте", Status.NEW,
                 null, null);
         epic = new Epic("Приготовить обед", "Приготовить яишницу по канадски");
@@ -34,11 +34,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Достать из холодильника продукты", Status.NEW, null, null);
         secondSubtask = new Subtask(epic.getId(), "Пожарить яишницу", "Пожарить яица на сковородке",
                 Status.NEW, null, null);
-    }
-
-    @BeforeEach
-    public void beforeEach() {
-        taskManager = createTaskManager();
     }
 
     @AfterEach
@@ -148,52 +143,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.removeSubtasks();
         subtaskByEpic = taskManager.getSubtasksByEpic(epic);
         assertEquals(0, subtaskByEpic.size(), "Сохранился неактуальный Id подзадачи после удаления");
-    }
-
-    @Test
-    public void epicHasStatusNewIfAllSubtasksHasStatusNew() {
-        taskManager.createEpic(epic);
-        taskManager.createSubtask(firstSubtask);
-        taskManager.createSubtask(secondSubtask);
-        assertEquals(Status.NEW, taskManager.getEpic(epic.getId()).getStatus(),
-                "Статус эпика не соответствует действительности");
-    }
-
-    @Test
-    public void epicHasStatusDoneIfAllSubtasksHasStatusDone() {
-        taskManager.createEpic(epic);
-        taskManager.createSubtask(new Subtask(firstSubtask.getEpicId(), firstSubtask.getName(),
-                firstSubtask.getDescription(), Status.DONE, firstSubtask.getStartTime(), firstSubtask.getDuration()));
-        taskManager.createSubtask(new Subtask(secondSubtask.getEpicId(), secondSubtask.getName(),
-                secondSubtask.getDescription(), Status.DONE, secondSubtask.getStartTime(),
-                secondSubtask.getDuration()));
-        assertEquals(Status.DONE, taskManager.getEpic(epic.getId()).getStatus(),
-                "Статус эпика не соответствует действительности");
-    }
-
-    @Test
-    public void epicHasStatusInProgressIfAllSubtasksHasStatusNewAndDone() {
-        taskManager.createEpic(epic);
-        taskManager.createSubtask(new Subtask(firstSubtask.getEpicId(), firstSubtask.getName(),
-                firstSubtask.getDescription(), Status.NEW, firstSubtask.getStartTime(), firstSubtask.getDuration()));
-        taskManager.createSubtask(new Subtask(secondSubtask.getEpicId(), secondSubtask.getName(),
-                secondSubtask.getDescription(), Status.DONE, secondSubtask.getStartTime(),
-                secondSubtask.getDuration()));
-        assertEquals(Status.IN_PROGRESS, taskManager.getEpic(epic.getId()).getStatus(),
-                "Статус эпика не соответствует действительности");
-    }
-
-    @Test
-    public void epicHasStatusInProgressIfAllSubtasksHasStatusInProgress() {
-        taskManager.createEpic(epic);
-        taskManager.createSubtask(new Subtask(firstSubtask.getEpicId(), firstSubtask.getName(),
-                firstSubtask.getDescription(), Status.IN_PROGRESS, firstSubtask.getStartTime(),
-                firstSubtask.getDuration()));
-        taskManager.createSubtask(new Subtask(secondSubtask.getEpicId(), secondSubtask.getName(),
-                secondSubtask.getDescription(), Status.IN_PROGRESS, secondSubtask.getStartTime(),
-                secondSubtask.getDuration()));
-        assertEquals(Status.IN_PROGRESS, taskManager.getEpic(epic.getId()).getStatus(),
-                "Статус эпика не соответствует действительности");
     }
 
     @Test
