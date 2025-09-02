@@ -12,6 +12,7 @@ public class Epic extends Task {
     private LocalDateTime endTime;
     private static final int MIN_COMPLETED_SUBTASKS = 0;
 
+    @Override
     public LocalDateTime getEndTime() {
         return endTime;
     }

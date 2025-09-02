@@ -176,6 +176,7 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
+    @Override
     public List<Task> getPrioritizedTasks() {
         return new ArrayList<>(prioritizedTaskList);
     }
@@ -215,6 +216,7 @@ public class InMemoryTaskManager implements TaskManager {
         return taskOccupiedInterval.isPresent();
     }
 
+    @Override
     public List<Subtask> getSubtasksByEpic(Epic epic) {
         return epic.getSubtasks();
     }
