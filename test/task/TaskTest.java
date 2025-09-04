@@ -11,7 +11,8 @@ public class TaskTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Task task = new Task("Сделать подарок Матвею", "Отправить посылку Матвею по почте", Status.NEW);
+        Task task = new Task("Сделать подарок Матвею", "Отправить посылку Матвею по почте",
+                Status.NEW, null, null);
 
         firstTask = task;
         secondTask = task;
@@ -19,8 +20,7 @@ public class TaskTest {
 
     @Test
     public void taskWithSameIdAreEqual() {
-        if (firstTask.getId() == secondTask.getId()) {
-            assertEquals(firstTask, secondTask, "Задачи не равны");
-        }
+        assertEquals(firstTask.getId(), secondTask.getId(), "Id задач не равны");
+        assertEquals(firstTask, secondTask, "Задачи не равны");
     }
 }
