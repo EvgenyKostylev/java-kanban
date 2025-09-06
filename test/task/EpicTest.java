@@ -19,6 +19,7 @@ public class EpicTest {
     @BeforeAll
     public static void beforeAll() {
         Epic epic = new Epic("Приготовить обед", "Приготовить яишницу по канадски");
+        epic.setId(epic.hashCode());
 
         firstEpic = epic;
         secondEpic = epic;
@@ -26,9 +27,9 @@ public class EpicTest {
 
     @BeforeEach
     public void beforeEach() {
-        firstSubtask = new Subtask(firstEpic.getId(), "Достать продукты",
+        firstSubtask = new Subtask(firstEpic.hashCode(), "Достать продукты",
                 "Достать из холодильника яйца и кетчуп", Status.NEW, null, null);
-        secondSubtask = new Subtask(firstEpic.getId(), "Достать продукты",
+        secondSubtask = new Subtask(firstEpic.hashCode(), "Достать продукты",
                 "Достать из холодильника яйца и кетчуп", Status.NEW, null, null);
         subtaskList = new ArrayList<>();
     }

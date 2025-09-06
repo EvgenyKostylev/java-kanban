@@ -40,12 +40,14 @@ public class Epic extends Task {
         updateTime();
     }
 
-    public void addSubtask(Subtask subtask) {
+    public boolean addSubtask(Subtask subtask) {
         if (subtask.getId() != getId()) {
             subtaskList.add(subtask);
             updateStatus();
             updateTime();
+            return true;
         }
+        return false;
     }
 
     public void removeSubtask(Subtask subtask) {
@@ -105,15 +107,22 @@ public class Epic extends Task {
         }
     }
 
-    public void updateSubtask(Subtask subtask) {
-        setSubtasks(getSubtasks().stream()
-                .map(subtaskByEpic -> {
-                    if (subtaskByEpic.getId() == subtask.getId()) {
-                        return subtask;
-                    } else {
-                        return subtaskByEpic;
-                    }
-                }).collect(Collectors.toList()));
+    public boolean updateSubtask(Subtask subtask) {
+        if (subtask.getId() == getId()) {
+            return false;
+        } else {
+            setSubtasks(getSubtasks().stream()
+                    .map(subtaskByEpic -> {
+                        if (subtaskByEpic.getId() == subtask.getId()) {
+                            return subtask;
+                        } else {
+                            return subtaskByEpic;
+                        }
+                    }).collect(Collectors.toList()));
+            updateStatus();
+            updateTime();
+        }
+        return true;
     }
 
     @Override

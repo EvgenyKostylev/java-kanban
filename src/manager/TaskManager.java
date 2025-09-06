@@ -1,16 +1,17 @@
 package manager;
 
+import exception.NotAcceptableTimeException;
+import exception.NotFoundException;
 import task.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-    ArrayList<Task> getTasks();
+    List<Task> getTasks();
 
-    ArrayList<Epic> getEpics();
+    List<Epic> getEpics();
 
-    ArrayList<Subtask> getSubtasks();
+    List<Subtask> getSubtasks();
 
     void removeTasks();
 
@@ -18,29 +19,29 @@ public interface TaskManager {
 
     void removeSubtasks();
 
-    Task getTask(int id);
+    Task getTask(int id) throws NotFoundException;
 
-    Epic getEpic(int id);
+    Epic getEpic(int id) throws NotFoundException;
 
-    Subtask getSubtask(int id);
+    Subtask getSubtask(int id) throws NotFoundException;
 
-    Task createTask(Task task);
+    Task createTask(Task task) throws NotAcceptableTimeException;
 
     Epic createEpic(Epic epic);
 
-    Subtask createSubtask(Subtask subtask);
+    Subtask createSubtask(Subtask subtask) throws NotAcceptableTimeException;
 
-    Task updateTask(Task task);
+    Task updateTask(Task task) throws NotAcceptableTimeException;
 
     Epic updateEpic(Epic newEpic);
 
-    Subtask updateSubtask(Subtask subtask);
+    Subtask updateSubtask(Subtask subtask) throws NotAcceptableTimeException;
 
-    void removeTask(int id);
+    Task removeTask(int id) throws NotFoundException;
 
-    void removeEpic(int id);
+    Epic removeEpic(int id) throws NotFoundException;
 
-    void removeSubtask(int id);
+    Subtask removeSubtask(int id) throws NotFoundException;
 
     List<Task> getHistory();
 

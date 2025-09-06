@@ -28,10 +28,13 @@ public abstract class HistoryManagerTest<T extends HistoryManager> {
     public static void beforeAll() {
         task = new Task("Сделать подарок Матвею", "Отправить посылку Матвею по почте",
                 Status.NEW, null, null);
+        task.setId(task.hashCode());
         secondTask = new Task("Сходить погулять", "Выйти на улицу", Status.NEW, null,
                 null);
+        secondTask.setId(secondTask.hashCode());
         thirdTask = new Task("Почистить память компьютера", "Удалить ненужные файлы с компьютера",
                 Status.NEW, null, null);
+        thirdTask.setId(thirdTask.hashCode());
     }
 
     @Test
