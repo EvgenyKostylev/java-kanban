@@ -4,8 +4,8 @@ import com.sun.net.httpserver.HttpServer;
 import handler.*;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
-import typeAdapter.DurationTypeAdapter;
-import typeAdapter.LocalDateTimeAdapter;
+import adapter.type.DurationTypeAdapter;
+import adapter.type.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
