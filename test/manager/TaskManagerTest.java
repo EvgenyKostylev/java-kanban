@@ -1,5 +1,7 @@
 package manager;
 
+import exception.NotAcceptableTimeException;
+import exception.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,9 +32,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         task = new Task("Сделать подарок Матвею", "Отправить посылку Матвею по почте", Status.NEW,
                 null, null);
         epic = new Epic("Приготовить обед", "Приготовить яишницу по канадски");
-        firstSubtask = new Subtask(epic.getId(), "Достать продукты",
+        firstSubtask = new Subtask(epic.hashCode(), "Достать продукты",
                 "Достать из холодильника продукты", Status.NEW, null, null);
-        secondSubtask = new Subtask(epic.getId(), "Пожарить яишницу", "Пожарить яица на сковородке",
+        secondSubtask = new Subtask(epic.hashCode(), "Пожарить яишницу", "Пожарить яица на сковородке",
                 Status.NEW, null, null);
     }
 
@@ -47,7 +49,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void managerCanFindCreatedTaskById() {
         taskManager.createTask(task);
 
-        ArrayList<Task> taskList = taskManager.getTasks();
+        List<Task> taskList = taskManager.getTasks();
 
         assertEquals(task, taskList.getFirst(), "Менеджер не добавляет задачи");
         assertEquals(task, taskManager.getTask(task.getId()), "Менеджер не находит задачи по Id");
@@ -55,7 +57,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void managerCorrectlyHandleSearchNonExistentTask() {
-        assertNull(taskManager.getTask(213132),
+        assertThrows(NotFoundException.class, () -> taskManager.getTask(213132),
                 "Менеджер некорректно обрабатывает поиск несуществующей задачи");
     }
 
@@ -63,7 +65,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void managerCanFindCreatedEpicById() {
         taskManager.createEpic(epic);
 
-        ArrayList<Epic> epicList = taskManager.getEpics();
+        List<Epic> epicList = taskManager.getEpics();
 
         assertEquals(epic, epicList.getFirst(), "Менеджер не добавляет эпики");
         assertEquals(epic, taskManager.getEpic(epic.getId()), "Менеджер не находит эпики по Id");
@@ -71,7 +73,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void managerCorrectlyHandleSearchNonExistentEpic() {
-        assertNull(taskManager.getEpic(213132),
+        assertThrows(NotFoundException.class, () -> taskManager.getEpic(213132),
                 "Менеджер некорректно обрабатывает поиск несуществующего эпика");
     }
 
@@ -80,7 +82,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createEpic(epic);
         taskManager.createSubtask(firstSubtask);
 
-        ArrayList<Subtask> subtaskList = taskManager.getSubtasks();
+        List<Subtask> subtaskList = taskManager.getSubtasks();
 
         assertEquals(firstSubtask, subtaskList.getFirst(), "Менеджер не добавляет подзадачи");
         assertEquals(firstSubtask, taskManager.getSubtask(firstSubtask.getId()),
@@ -89,7 +91,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void managerCorrectlyHandleSearchNonExistentSubtask() {
-        assertNull(taskManager.getSubtask(213132),
+        assertThrows(NotFoundException.class, () -> taskManager.getSubtask(213132),
                 "Менеджер некорректно обрабатывает поиск несуществующей подзадачи");
     }
 
@@ -113,7 +115,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         newTask.setId(123164611);
         taskManager.createTask(newTask);
 
-        ArrayList<Task> taskList = taskManager.getTasks();
+        List<Task> taskList = taskManager.getTasks();
         Task addedTask = taskList.getFirst();
 
         assertEquals(newTask.getName(), addedTask.getName(), "После добавления изменилось имя задачи");
@@ -147,9 +149,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void cannotCreateSubtaskWithNonExistEpic() {
-        Subtask subtaskWithExistEpic = taskManager.createSubtask(firstSubtask);
-
-        assertNull(subtaskWithExistEpic, "Подзадача может существовать с несуществующим эпиком");
+        assertThrows(NotFoundException.class, () -> taskManager.createSubtask(firstSubtask), "Подзадача может существовать с несуществующим эпиком");
     }
 
     @Test
@@ -157,7 +157,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createEpic(epic);
         taskManager.createSubtask(firstSubtask);
         taskManager.removeEpic(epic.getId());
-        assertNull(taskManager.getSubtask(firstSubtask.getId()), "Подзакада может существовать без эпика");
+        assertThrows(NotFoundException.class, () -> taskManager.getSubtask(firstSubtask.getId()), "Подзакада может существовать без эпика");
     }
 
     @Test
@@ -168,7 +168,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.now(), Duration.ofHours(1));
 
         taskManager.createTask(firstTaskWithInterval);
-        assertNull(taskManager.createTask(secondTaskWithInterval), "Задачи могут иметь одинаковые интервалы");
+        assertThrows(NotAcceptableTimeException.class, () -> taskManager.createTask(secondTaskWithInterval), "Задачи могут иметь одинаковые интервалы");
     }
 
     @Test
@@ -179,7 +179,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.now().minusMinutes(30), Duration.ofHours(1));
 
         taskManager.createTask(firstTaskWithInterval);
-        assertNull(taskManager.createTask(secondTaskWithInterval),
+        assertThrows(NotAcceptableTimeException.class, () -> taskManager.createTask(secondTaskWithInterval),
                 "Задачи могут иметь пересекающиеся интервалы");
     }
 
@@ -188,12 +188,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createTask(task);
         assertEquals(task, taskManager.getTask(task.getId()), "Менеджер не создаёт указанную задачу");
         taskManager.removeTask(task.getId());
-        assertNull(taskManager.getTask(task.getId()), "Менеджер не удаляет указанную задачу");
+        assertThrows(NotFoundException.class, () -> taskManager.getTask(task.getId()), "Менеджер не удаляет указанную задачу");
     }
 
     @Test
     public void managerCorrectlyHandleDeleteNonExistentTask() {
-        assertDoesNotThrow(() -> taskManager.removeTask(task.getId()),
+        assertThrows(NotFoundException.class, () -> taskManager.removeTask(task.getId()),
                 "Менеджер некорректно обрабатывает удаление несуществующей задачи");
     }
 
@@ -202,18 +202,18 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createEpic(epic);
         assertEquals(epic, taskManager.getEpic(epic.getId()), "Менеджер не создаёт указанный эпик");
         taskManager.removeEpic(epic.getId());
-        assertNull(taskManager.getEpic(epic.getId()), "Менеджер не удаляет указанный эпик");
+        assertThrows(NotFoundException.class, () -> taskManager.getEpic(epic.getId()), "Менеджер не удаляет указанный эпик");
     }
 
     @Test
     public void managerCorrectlyHandleDeleteNonExistentEpic() {
-        assertDoesNotThrow(() -> taskManager.removeEpic(epic.getId()),
+        assertThrows(NotFoundException.class, () -> taskManager.removeEpic(epic.getId()),
                 "Менеджер некорректно обрабатывает удаление несуществующего эпика");
     }
 
     @Test
     public void managerCorrectlyHandleDeleteNonExistentSubtask() {
-        assertDoesNotThrow(() -> taskManager.removeSubtask(firstSubtask.getId()),
+        assertThrows(NotFoundException.class, () -> taskManager.removeSubtask(firstSubtask.getId()),
                 "Менеджер некорректно обрабатывает удаление несуществующей подзадачи");
     }
 
@@ -224,7 +224,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(firstSubtask, taskManager.getSubtask(firstSubtask.getId()),
                 "Менеджер не создаёт указанную подзадачу");
         taskManager.removeSubtask(firstSubtask.getId());
-        assertNull(taskManager.getSubtask(firstSubtask.getId()), "Менеджер не удаляет указанную подзадачу");
+        assertThrows(NotFoundException.class, () -> taskManager.getSubtask(firstSubtask.getId()), "Менеджер не удаляет указанную подзадачу");
     }
 
     @Test
