@@ -22,7 +22,9 @@ public class DurationTypeAdapter extends TypeAdapter<Duration> {
             in.nextNull();
             return null;
         }
-        long seconds = in.nextLong();
-        return Duration.ofMinutes(seconds);
+
+        long minutes = in.nextLong();
+
+        return Duration.ofMinutes(minutes);
     }
 }

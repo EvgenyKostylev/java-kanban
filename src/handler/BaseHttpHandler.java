@@ -19,10 +19,13 @@ public abstract class BaseHttpHandler implements HttpHandler {
             switch (method) {
                 case "GET":
                     handleGetRequest(httpExchange);
+                    break;
                 case "POST":
                     handlePostRequest(httpExchange);
+                    break;
                 case "DELETE":
                     handleDeleteRequest(httpExchange);
+                    break;
                 default:
                     sendNotFound(httpExchange);
             }

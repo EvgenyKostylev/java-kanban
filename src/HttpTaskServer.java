@@ -3,6 +3,7 @@ import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
 import handler.*;
 import manager.InMemoryTaskManager;
+import manager.Managers;
 import manager.TaskManager;
 import adapter.type.DurationTypeAdapter;
 import adapter.type.LocalDateTimeAdapter;
@@ -31,7 +32,8 @@ public class HttpTaskServer {
     }
 
     public static void main(String[] args) throws IOException {
-        HttpTaskServer httpTaskServer = new HttpTaskServer(new InMemoryTaskManager());
+        HttpTaskServer httpTaskServer = new HttpTaskServer(Managers.getDefault());
+
         httpTaskServer.start();
     }
 

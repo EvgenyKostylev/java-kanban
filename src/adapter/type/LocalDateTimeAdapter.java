@@ -22,7 +22,9 @@ public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
             in.nextNull();
             return null;
         }
+
         String stringLocalDateTime = in.nextString();
+
         return LocalDateTime.parse(stringLocalDateTime);
     }
 }
